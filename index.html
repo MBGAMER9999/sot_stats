@@ -6,13 +6,19 @@
   <!-- Include Chart.js from a CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* Overall Dark Theme */
+    /* Overall Dark Theme (default) */
     body {
       background-color: #121212;
       color: #ffffff;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    /* Light Theme Overrides */
+    body.light-theme {
+      background-color: #f0f0f0;
+      color: #000000;
     }
     h1 {
       text-align: center;
@@ -21,17 +27,40 @@
       background-color: #1f1f1f;
       border-bottom: 2px solid #2196f3;
     }
+    body.light-theme h1 {
+      background-color: #e0e0e0;
+      border-bottom-color: #1976d2;
+    }
     /* Container */
     .container {
       max-width: 1200px;
       margin: 20px auto;
       padding: 0 20px;
     }
-    /* Mode Tabs */
+    /* Top-Level Game Mode Tabs */
+    #gameModeTabs {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0 10px 0;
+    }
+    #gameModeTabs button {
+      background-color: #1f1f1f;
+      color: #fff;
+      border: 1px solid #333;
+      padding: 8px 16px;
+      cursor: pointer;
+      margin: 0 5px;
+      border-radius: 4px;
+    }
+    #gameModeTabs button.active {
+      background-color: #2196f3;
+      border-color: #2196f3;
+    }
+    /* Sub-Mode Tabs */
     #modeTabs {
       display: flex;
       justify-content: center;
-      margin: 20px 0;
+      margin: 10px 0 20px 0;
     }
     #modeTabs button {
       background-color: #1f1f1f;
@@ -54,6 +83,10 @@
       border: 1px solid #333;
       margin-bottom: 30px;
     }
+    body.light-theme #summary {
+      background-color: #e0e0e0;
+      border-color: #999;
+    }
     #summary h2 {
       margin-top: 0;
       color: #2196f3;
@@ -61,14 +94,10 @@
     #summary p {
       margin: 6px 0;
     }
-    /* New: Streak, Sell Button, and Reset Button */
-    #currentStreak, #maxStreakDisplay {
-      font-weight: bold;
-      margin-top: 10px;
-    }
-    #sellStreakBtn, #resetBtn {
+    /* Buttons in Summary */
+    #sellStreakBtn, #resetBtn, #exportBtn, #importBtn, #undoBtn, #toggleThemeBtn {
       padding: 6px 12px;
-      margin-top: 5px;
+      margin: 5px 5px 5px 0;
       border: none;
       border-radius: 4px;
       cursor: pointer;
@@ -86,6 +115,34 @@
     }
     #resetBtn:hover {
       background-color: #e53935;
+    }
+    #exportBtn {
+      background-color: #4caf50;
+      color: #fff;
+    }
+    #exportBtn:hover {
+      background-color: #43a047;
+    }
+    #importBtn {
+      background-color: #4caf50;
+      color: #fff;
+    }
+    #importBtn:hover {
+      background-color: #43a047;
+    }
+    #undoBtn {
+      background-color: #9c27b0;
+      color: #fff;
+    }
+    #undoBtn:hover {
+      background-color: #7b1fa2;
+    }
+    #toggleThemeBtn {
+      background-color: #607d8b;
+      color: #fff;
+    }
+    #toggleThemeBtn:hover {
+      background-color: #455a64;
     }
     /* Achievements */
     #achievements {
@@ -106,6 +163,17 @@
       border-radius: 4px;
       cursor: default;
     }
+    /* Insights Panel */
+    #insightsPanel {
+      background-color: #1f1f1f;
+      border: 1px solid #333;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 30px;
+    }
+    body.light-theme #insightsPanel {
+      background-color: #e0e0e0;
+    }
     /* Form Styling */
     #battleForm {
       display: grid;
@@ -117,6 +185,9 @@
       margin-bottom: 30px;
       border: 1px solid #333;
     }
+    body.light-theme #battleForm {
+      background-color: #e0e0e0;
+    }
     #battleForm label {
       align-self: center;
     }
@@ -127,6 +198,11 @@
       border: 1px solid #444;
       background-color: #121212;
       color: #ffffff;
+    }
+    body.light-theme #battleForm input,
+    body.light-theme #battleForm select {
+      background-color: #fff;
+      color: #000;
     }
     #battleForm input::placeholder {
       color: #999;
@@ -157,16 +233,25 @@
       border: 1px solid #333;
       border-radius: 6px;
     }
+    body.light-theme #filterSortContainer {
+      background-color: #e0e0e0;
+      border-color: #999;
+    }
     #filterSortContainer label {
       margin-right: 5px;
     }
-    #filterSortContainer select {
+    #filterSortContainer select, #filterSortContainer input[type="date"] {
       padding: 6px;
       border-radius: 4px;
       border: 1px solid #444;
       background-color: #121212;
       color: #ffffff;
       margin-right: 15px;
+    }
+    body.light-theme #filterSortContainer select,
+    body.light-theme #filterSortContainer input[type="date"] {
+      background-color: #fff;
+      color: #000;
     }
     /* Table Styling */
     table {
@@ -177,6 +262,10 @@
       border: 1px solid #333;
       border-radius: 6px;
       overflow: hidden;
+    }
+    body.light-theme table {
+      background-color: #fff;
+      border-color: #999;
     }
     table thead {
       background-color: #2196f3;
@@ -190,13 +279,17 @@
       word-wrap: break-word;
       overflow-wrap: break-word;
     }
+    body.light-theme table th, 
+    body.light-theme table td {
+      color: #000;
+    }
     table th {
       font-weight: bold;
     }
     table tbody tr:hover {
       background-color: #2a2a2a;
     }
-    /* Wrap long text in specific columns so that long messages wrap vertically */
+    /* Wrap long text in specific columns so text wraps vertically */
     table td:nth-child(5),
     table td:nth-child(6),
     table td:nth-child(7) {
@@ -226,7 +319,7 @@
       background-color: #e53935;
     }
     /* Chart Containers */
-    #chartContainer, #winChartContainer {
+    #chartContainer, #winChartContainer, #timelineChartContainer, #barChartContainer {
       width: 100%;
       max-width: 1000px;
       margin: 0 auto 30px auto;
@@ -237,12 +330,56 @@
     #winChartContainer {
       height: 300px;
     }
+    #timelineChartContainer {
+      height: 300px;
+    }
+    #barChartContainer {
+      height: 300px;
+    }
+    /* Modal for Detailed Battle View */
+    #battleModal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.7);
+    }
+    #battleModalContent {
+      background-color: #1f1f1f;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      border-radius: 6px;
+      color: #fff;
+    }
+    body.light-theme #battleModalContent {
+      background-color: #fff;
+      color: #000;
+    }
+    #closeModal {
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <h1>Sea of Thieves Battles Tracker</h1>
   <div class="container">
-    <!-- Mode Tabs -->
+    <!-- Top-Level Game Mode Tabs -->
+    <div id="gameModeTabs">
+      <button onclick="setGameMode('Normal')" id="tabNormal" class="active">Normal</button>
+      <button onclick="setGameMode('Evil')" id="tabEvil">Evil</button>
+      <button onclick="setGameMode('TDM')" id="tabTDM">TDM</button>
+    </div>
+    
+    <!-- Sub-Mode Tabs -->
     <div id="modeTabs">
       <button onclick="setMode('Solo')" id="tabSolo" class="active">Solo</button>
       <button onclick="setMode('Duo')" id="tabDuo">Duo</button>
@@ -252,7 +389,7 @@
     
     <!-- Summary Section -->
     <div id="summary">
-      <h2>Summary (<span id="currentModeDisplay">Solo</span>)</h2>
+      <h2>Summary (<span id="currentGameModeDisplay">Normal</span> - <span id="currentModeDisplay">Solo</span>)</h2>
       <p id="totalBattles">Total Battles: 0</p>
       <p id="avgKills">Average Kills: 0</p>
       <p id="bestKills">Most Kills: N/A</p>
@@ -262,15 +399,24 @@
       <p id="currentStreak">Current Streak: 0</p>
       <p id="maxStreakDisplay">Max Streak: 0</p>
       <button id="sellStreakBtn" onclick="sellStreak()">Sell Streak</button>
-      <!-- Reset Data Button -->
       <button id="resetBtn" onclick="resetAllData()">Reset All Data</button>
+      <button id="exportBtn" onclick="exportData()">Export Data</button>
+      <button id="importBtn" onclick="document.getElementById('importFile').click()">Import Data</button>
+      <button id="undoBtn" onclick="undoDelete()" style="display:none;">Undo Delete</button>
+      <button id="toggleThemeBtn" onclick="toggleTheme()">Toggle Theme</button>
       <div id="achievements">
         <h3>Achievements</h3>
         <ul id="achievementsList"></ul>
       </div>
     </div>
     
-    <!-- Battle Form (mode determined by active tab) -->
+    <!-- Hidden file input for importing data -->
+    <input type="file" id="importFile" accept="application/json" style="display:none" onchange="importData(event)">
+    
+    <!-- Insights Panel -->
+    <div id="insightsPanel"></div>
+    
+    <!-- Battle Form -->
     <form id="battleForm">
       <label for="date">Date:</label>
       <input type="date" id="date" required>
@@ -296,7 +442,7 @@
       <button type="button" id="submitBtn" onclick="handleFormSubmit()">Add Battle</button>
     </form>
     
-    <!-- Filter and Sort Options -->
+    <!-- Filter and Sort Options (including Advanced Date Filtering) -->
     <div id="filterSortContainer">
       <div>
         <label for="filterOutcome">Filter by Outcome:</label>
@@ -305,6 +451,12 @@
           <option value="Win">Win</option>
           <option value="Loss">Loss</option>
         </select>
+      </div>
+      <div>
+        <label for="filterFromDate">From:</label>
+        <input type="date" id="filterFromDate" onchange="updateAll()">
+        <label for="filterToDate">To:</label>
+        <input type="date" id="filterToDate" onchange="updateAll()">
       </div>
       <div>
         <label for="sortBy">Sort by:</label>
@@ -348,29 +500,36 @@
     <div id="chartContainer">
       <canvas id="myChart"></canvas>
     </div>
+    
+    <!-- Timeline Chart for Win/Loss Trend -->
+    <div id="timelineChartContainer">
+      <canvas id="timelineChart"></canvas>
+    </div>
+    
+    <!-- Bar Chart for Monthly Battle Count -->
+    <div id="barChartContainer">
+      <canvas id="barChart"></canvas>
+    </div>
+  </div>
+  
+  <!-- Modal for Detailed Battle View -->
+  <div id="battleModal">
+    <div id="battleModalContent">
+      <span id="closeModal" onclick="closeModal()">&times;</span>
+      <div id="modalBody"></div>
+    </div>
   </div>
   
   <script>
-    // Global variable to track current mode (set by tab)
+    // Global variables for game mode and sub-mode
+    let currentGameMode = 'Normal';
     let currentMode = 'Solo';
-    // Data store for battles and editing index
     let battlesData = [];
     let editIndex = null;
+    let lastDeletedBattle = null;
     
-    // Object to track streak reset point per mode
-    let streakReset = { 'Solo': 0, 'Duo': 0, 'Trio': 0, 'Squad': 0 };
-    // Object to track maximum streak per mode
-    let maxStreak = { 'Solo': 0, 'Duo': 0, 'Trio': 0, 'Squad': 0 };
-    
-    // Load streakReset and maxStreak from localStorage if available
-    const savedStreakReset = localStorage.getItem('streakReset');
-    if (savedStreakReset) {
-      streakReset = JSON.parse(savedStreakReset);
-    }
-    const savedMaxStreak = localStorage.getItem('maxStreak');
-    if (savedMaxStreak) {
-      maxStreak = JSON.parse(savedMaxStreak);
-    }
+    // For streaks per combination (key = "GameMode-SubMode")
+    let maxStreak = {};
     
     // Form field references
     const dateInput = document.getElementById('date');
@@ -381,115 +540,99 @@
     const lessonsInput = document.getElementById('lessons');
     const submitBtn = document.getElementById('submitBtn');
     const currentModeDisplay = document.getElementById('currentModeDisplay');
+    const currentGameModeDisplay = document.getElementById('currentGameModeDisplay');
     
-    // Helper function to get the smallest available battle number
+    // Chart instances
+    let myChart, winChart, timelineChart, barChart;
+    
+    // Helper: key for current combination
+    function getKey() {
+      return currentGameMode + '-' + currentMode;
+    }
+    
+    // Helper function to get next available battle number for current combination
     function getNextBattleNumber() {
       let num = 1;
-      while(battlesData.some(b => b.battleNumber === num)) {
+      while(battlesData.some(b => b.battleNumber === num && b.gameMode === currentGameMode && b.mode === currentMode)) {
         num++;
       }
       return num;
     }
     
-    // Initialize Chart.js for Kills (line chart)
-    const ctx = document.getElementById('myChart').getContext('2d');
-    const myChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [
-          {
-            label: 'Kills',
-            data: [],
-            borderColor: '#00bcd4',
-            fill: false,
-            tension: 0.1,
-            yAxisID: 'yKills'
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        backgroundColor: '#121212',
-        scales: {
-          yKills: {
-            type: 'linear',
-            position: 'left',
-            title: {
-              display: true,
-              text: 'Kills',
-              color: '#ffffff'
-            },
-            grid: { color: '#333' },
-            ticks: { color: '#ffffff', stepSize: 1 }
+    // Initialize Charts
+    function initCharts() {
+      const ctx1 = document.getElementById('myChart').getContext('2d');
+      myChart = new Chart(ctx1, {
+        type: 'line',
+        data: { labels: [], datasets: [{ label: 'Kills', data: [], borderColor: '#00bcd4', fill: false, tension: 0.1, yAxisID: 'yKills' }] },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            yKills: { type: 'linear', position: 'left', title: { display: true, text: 'Kills', color: '#ffffff' }, grid: { color: '#333' }, ticks: { color: '#ffffff', stepSize: 1 } },
+            x: { ticks: { color: '#ffffff' }, grid: { color: '#333' } }
           },
-          x: {
-            ticks: { color: '#ffffff' },
-            grid: { color: '#333' }
-          }
-        },
-        plugins: { legend: { labels: { color: '#ffffff' } } }
-      }
-    });
+          plugins: { legend: { labels: { color: '#ffffff' } } }
+        }
+      });
+      
+      const winCtx = document.getElementById('winChart').getContext('2d');
+      winChart = new Chart(winCtx, {
+        type: 'doughnut',
+        data: { labels: ['Wins', 'Losses'], datasets: [{ data: [0, 0], backgroundColor: ['#4caf50', '#f44336'] }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#ffffff' } } } }
+      });
+      
+      const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+      timelineChart = new Chart(timelineCtx, {
+        type: 'line',
+        data: { labels: [], datasets: [
+          { label: 'Wins', data: [], borderColor: '#4caf50', fill: false },
+          { label: 'Losses', data: [], borderColor: '#f44336', fill: false }
+        ]},
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+      
+      const barCtx = document.getElementById('barChart').getContext('2d');
+      barChart = new Chart(barCtx, {
+        type: 'bar',
+        data: { labels: [], datasets: [{ label: 'Battles Count', data: [], backgroundColor: '#2196f3' }] },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    }
     
-    // Initialize Win/Loss Pie Chart
-    const winCtx = document.getElementById('winChart').getContext('2d');
-    const winChart = new Chart(winCtx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Wins', 'Losses'],
-        datasets: [{
-          data: [0, 0],
-          backgroundColor: ['#4caf50', '#f44336']
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { labels: { color: '#ffffff' } } }
-      }
-    });
-    
-    // Achievement tooltips info
-    const achievementInfo = {
-      "First Win": "Achieved when you win your first battle.",
-      "Veteran": "Achieved after completing at least 10 battles.",
-      "Killer Instinct": "Achieved when your average kills per battle are 15 or more.",
-      "Domination": "Achieved when you get 20 or more kills in a single battle.",
-      "Perfect Record": "Achieved when you have a 100% win rate. (You can only get this by playing at least 10 games.)"
-    };
-    
-    // Set mode when a tab is clicked
+    // Set sub-mode
     function setMode(mode) {
       currentMode = mode;
       currentModeDisplay.textContent = mode;
-      document.querySelectorAll("#modeTabs button").forEach(btn => {
-        btn.classList.remove("active");
-      });
+      document.querySelectorAll("#modeTabs button").forEach(btn => btn.classList.remove("active"));
       document.getElementById("tab" + mode).classList.add("active");
       updateAll();
     }
     
-    // Load saved battlesData from localStorage on page load
+    // Set top-level game mode
+    function setGameMode(gameMode) {
+      currentGameMode = gameMode;
+      currentGameModeDisplay.textContent = gameMode;
+      document.querySelectorAll("#gameModeTabs button").forEach(btn => btn.classList.remove("active"));
+      document.getElementById("tab" + gameMode).classList.add("active");
+      updateAll();
+    }
+    
+    // Load data from localStorage on page load
     window.onload = function() {
       const savedData = localStorage.getItem('battlesData');
-      if (savedData) {
-        battlesData = JSON.parse(savedData);
-      }
+      if (savedData) battlesData = JSON.parse(savedData);
+      initCharts();
       updateAll();
     };
     
     // Handle Add/Edit button click
     function handleFormSubmit() {
-      if (editIndex === null) {
-        addBattle();
-      } else {
-        updateBattle(editIndex);
-      }
+      if (editIndex === null) addBattle(); else updateBattle(editIndex);
     }
     
-    // Add a new battle entry (mode is set by currentMode)
+    // Add battle entry
     function addBattle() {
       const newBattle = {
         battleNumber: getNextBattleNumber(),
@@ -499,16 +642,18 @@
         mistakes: mistakesInput.value.trim(),
         details: detailsInput.value.trim(),
         lessons: lessonsInput.value.trim(),
-        mode: currentMode
+        gameMode: currentGameMode,
+        mode: currentMode,
+        sold: false
       };
       battlesData.push(newBattle);
       updateAll();
       document.getElementById('battleForm').reset();
     }
     
-    // Update an existing battle entry
+    // Update battle entry
     function updateBattle(id) {
-      const battle = battlesData.find(b => b.battleNumber === id);
+      const battle = battlesData.find(b => b.battleNumber === id && b.gameMode === currentGameMode && b.mode === currentMode);
       if (battle) {
         battle.date = dateInput.value;
         battle.outcome = outcomeInput.value;
@@ -523,47 +668,58 @@
       document.getElementById('battleForm').reset();
     }
     
-    // Update filtered view (table) and overall stats (charts, summary, achievements, streak)
+    // Update views based on current game mode and sub-mode with additional filters
     function updateAll() {
-      // Get all battles for the current mode
-      const modeData = battlesData.filter(battle => battle.mode === currentMode);
+      let modeData = battlesData.filter(b => b.gameMode === currentGameMode && b.mode === currentMode);
       
-      // Update charts, summary, achievements, and streak using all battles for the mode
+      // Advanced Date Filtering
+      const fromDate = document.getElementById('filterFromDate').value;
+      const toDate = document.getElementById('filterToDate').value;
+      if (fromDate) {
+        modeData = modeData.filter(b => new Date(b.date) >= new Date(fromDate));
+      }
+      if (toDate) {
+        modeData = modeData.filter(b => new Date(b.date) <= new Date(toDate));
+      }
+      
+      // Update charts, summary, achievements, streak, insights, and extra analytics
       updateChart(modeData);
       updateSummary(modeData);
       updateAchievements(modeData);
       updateWinChart(modeData);
       updateStreak(modeData);
+      updateTimelineChart(modeData);
+      updateBarChart(modeData);
+      updateInsights(modeData);
       
-      // Apply filtering and sorting for the table view only
+      // Table filtering and sorting
       let tableData = modeData.slice();
       const filterOutcome = document.getElementById('filterOutcome').value;
-      if (filterOutcome !== "All") {
-          tableData = tableData.filter(battle => battle.outcome === filterOutcome);
-      }
+      if (filterOutcome !== "All") tableData = tableData.filter(b => b.outcome === filterOutcome);
       const sortBy = document.getElementById('sortBy').value;
       const sortOrder = document.getElementById('sortOrder').value;
       tableData.sort((a, b) => {
-          let valA = a[sortBy], valB = b[sortBy];
-          if (sortBy === "date") {
-            return sortOrder === "asc" ? new Date(valA) - new Date(valB) : new Date(valB) - new Date(valA);
-          } else if (sortBy === "battleNumber" || sortBy === "kills") {
-            return sortOrder === "asc" ? valA - valB : valB - valA;
-          } else {
-            return 0;
-          }
+        let valA = a[sortBy], valB = b[sortBy];
+        if (sortBy === "date") {
+          return sortOrder === "asc" ? new Date(valA) - new Date(valB) : new Date(valB) - new Date(valA);
+        } else if (sortBy === "battleNumber" || sortBy === "kills") {
+          return sortOrder === "asc" ? valA - valB : valB - valA;
+        } else { return 0; }
       });
       
       updateTable(tableData);
       saveData();
+      
+      // Show or hide Undo button if lastDeletedBattle exists
+      document.getElementById('undoBtn').style.display = lastDeletedBattle ? 'inline-block' : 'none';
     }
     
-    // Update the battles table with provided data
-    function updateTable(filteredData) {
-      const tableBody = document.getElementById('battlesTable').getElementsByTagName('tbody')[0];
-      tableBody.innerHTML = "";
-      filteredData.forEach(battle => {
-        let row = tableBody.insertRow();
+    // Update battles table
+    function updateTable(data) {
+      const tbody = document.getElementById('battlesTable').getElementsByTagName('tbody')[0];
+      tbody.innerHTML = "";
+      data.forEach(battle => {
+        let row = tbody.insertRow();
         row.insertCell(0).innerText = battle.battleNumber;
         row.insertCell(1).innerText = battle.date;
         row.insertCell(2).innerText = battle.outcome;
@@ -572,6 +728,10 @@
         row.insertCell(5).innerText = battle.details;
         row.insertCell(6).innerText = battle.lessons;
         let actionsCell = row.insertCell(7);
+        let viewBtn = document.createElement('button');
+        viewBtn.innerText = 'View Details';
+        viewBtn.className = 'action-btn';
+        viewBtn.onclick = () => viewDetails(battle);
         let editBtn = document.createElement('button');
         editBtn.innerText = 'Edit';
         editBtn.className = 'action-btn edit-btn';
@@ -580,174 +740,229 @@
         deleteBtn.innerText = 'Delete';
         deleteBtn.className = 'action-btn delete-btn';
         deleteBtn.onclick = () => deleteBattle(battle.battleNumber);
+        actionsCell.appendChild(viewBtn);
         actionsCell.appendChild(editBtn);
         actionsCell.appendChild(deleteBtn);
       });
     }
     
-    // Update the kills line chart with provided data
-    function updateChart(filteredData) {
-      myChart.data.labels = filteredData.map(battle => `Battle ${battle.battleNumber}`);
-      myChart.data.datasets[0].data = filteredData.map(battle => battle.kills);
+    // Update Kills Line Chart
+    function updateChart(data) {
+      myChart.data.labels = data.map(b => `Battle ${b.battleNumber}`);
+      myChart.data.datasets[0].data = data.map(b => b.kills);
       myChart.update();
     }
     
-    // Update summary stats with provided data
-    function updateSummary(filteredData) {
-      const totalBattles = filteredData.length;
-      document.getElementById('totalBattles').textContent = `Total Battles: ${totalBattles}`;
+    // Update Summary Stats
+    function updateSummary(data) {
+      const total = data.length;
+      document.getElementById('totalBattles').textContent = `Total Battles: ${total}`;
       let totalKills = 0, wins = 0;
-      filteredData.forEach(battle => {
-        totalKills += battle.kills;
-        if (battle.outcome === 'Win') wins++;
-      });
-      document.getElementById('avgKills').textContent = `Average Kills: ${totalBattles ? (totalKills / totalBattles).toFixed(2) : 0}`;
-      const bestKills = totalBattles ? Math.max(...filteredData.map(battle => battle.kills)) : 'N/A';
-      document.getElementById('bestKills').textContent = `Most Kills: ${bestKills}`;
-      const winRate = totalBattles ? ((wins / totalBattles) * 100).toFixed(2) : 0;
+      data.forEach(b => { totalKills += b.kills; if(b.outcome === 'Win') wins++; });
+      document.getElementById('avgKills').textContent = `Average Kills: ${total ? (totalKills/total).toFixed(2) : 0}`;
+      document.getElementById('bestKills').textContent = `Most Kills: ${total ? Math.max(...data.map(b => b.kills)) : 'N/A'}`;
+      const winRate = total ? ((wins/total)*100).toFixed(2) : 0;
       document.getElementById('winRate').textContent = `Win Rate: ${winRate}%`;
       document.getElementById('totalWins').textContent = `Total Wins: ${wins}`;
-      document.getElementById('totalLosses').textContent = `Total Losses: ${totalBattles - wins}`;
+      document.getElementById('totalLosses').textContent = `Total Losses: ${total - wins}`;
     }
     
-    // Update achievements based on provided data (with tooltips)
-    function updateAchievements(filteredData) {
-      const achievementsList = document.getElementById('achievementsList');
-      achievementsList.innerHTML = "";
-      const totalBattles = filteredData.length;
+    // Update Achievements
+    function updateAchievements(data) {
+      const list = document.getElementById('achievementsList');
+      list.innerHTML = "";
+      const total = data.length;
       let wins = 0, totalKills = 0;
-      filteredData.forEach(battle => {
-        totalKills += battle.kills;
-        if(battle.outcome === 'Win') wins++;
-      });
-      const avgKills = totalBattles ? totalKills / totalBattles : 0;
-      const bestKills = totalBattles ? Math.max(...filteredData.map(b => b.kills)) : 0;
-      const winRate = totalBattles ? (wins / totalBattles) * 100 : 0;
-      
+      data.forEach(b => { totalKills += b.kills; if(b.outcome === 'Win') wins++; });
+      const avgKills = total ? totalKills/total : 0;
+      const bestKills = total ? Math.max(...data.map(b => b.kills)) : 0;
+      const winRate = total ? (wins/total)*100 : 0;
       const achievements = [];
       if(wins >= 1) achievements.push("First Win");
-      if(totalBattles >= 10) achievements.push("Veteran");
+      if(total >= 10) achievements.push("Veteran");
       if(avgKills >= 15) achievements.push("Killer Instinct");
       if(bestKills >= 20) achievements.push("Domination");
-      if(totalBattles > 10 && winRate === 100) achievements.push("Perfect Record");
-      
-      if(achievements.length === 0) {
-        achievementsList.innerHTML = "<li>No achievements yet.</li>";
-      } else {
-        achievements.forEach(ach => {
-          let li = document.createElement('li');
-          li.innerText = ach;
-          li.title = achievementInfo[ach] || "";
-          achievementsList.appendChild(li);
-        });
-      }
+      if(total > 10 && winRate === 100) achievements.push("Perfect Record");
+      if(achievements.length === 0) list.innerHTML = "<li>No achievements yet.</li>";
+      else achievements.forEach(a => { let li = document.createElement('li'); li.innerText = a; li.title = achievementInfo[a] || ""; list.appendChild(li); });
     }
     
-    // Update the win/loss pie chart with provided data
-    function updateWinChart(filteredData) {
-      const totalBattles = filteredData.length;
+    // Update Win/Loss Pie Chart
+    function updateWinChart(data) {
+      const total = data.length;
       let wins = 0;
-      filteredData.forEach(battle => {
-        if(battle.outcome === 'Win') wins++;
-      });
-      const losses = totalBattles - wins;
+      data.forEach(b => { if(b.outcome === 'Win') wins++; });
+      const losses = total - wins;
       winChart.data.datasets[0].data = [wins, losses];
       winChart.update();
     }
     
-    // Compute and update current streak and max streak based on provided data
-    function updateStreak(filteredData) {
-      const resetPoint = streakReset[currentMode] || 0;
-      const relevant = filteredData.filter(b => b.battleNumber > resetPoint);
-      relevant.sort((a, b) => a.battleNumber - b.battleNumber);
-      let streak = 0;
-      for (let i = relevant.length - 1; i >= 0; i--) {
-        if (relevant[i].outcome === 'Win') {
-          streak++;
-        } else {
-          break;
-        }
-      }
+    // Update current streak: count unsold wins
+    function updateStreak(data) {
+      const unsoldWins = data.filter(b => b.outcome === 'Win' && !b.sold);
+      let streak = unsoldWins.length;
       document.getElementById('currentStreak').textContent = "Current Streak: " + streak;
-      if (streak > maxStreak[currentMode]) {
-        maxStreak[currentMode] = streak;
-      }
-      document.getElementById('maxStreakDisplay').textContent = "Max Streak: " + maxStreak[currentMode];
+      const key = getKey();
+      if(streak > (maxStreak[key] || 0)) maxStreak[key] = streak;
+      document.getElementById('maxStreakDisplay').textContent = "Max Streak: " + (maxStreak[key] || 0);
     }
     
-    // Sell the current streak (reset streak counter for current mode)
+    // Sell Streak: mark all unsold win battles as sold (thus resetting streak to 0)
     function sellStreak() {
-      const filteredData = battlesData.filter(b => b.mode === currentMode);
-      if (filteredData.length === 0) {
-        alert("No battles to sell streak from.");
-        return;
-      }
-      const resetPoint = streakReset[currentMode] || 0;
-      const relevant = filteredData.filter(b => b.battleNumber > resetPoint);
-      relevant.sort((a, b) => a.battleNumber - b.battleNumber);
-      let streak = 0;
-      let lastBattleNumber = resetPoint;
-      for (let i = relevant.length - 1; i >= 0; i--) {
-        if (relevant[i].outcome === 'Win') {
-          streak++;
-          lastBattleNumber = relevant[i].battleNumber;
-        } else {
-          break;
-        }
-      }
-      if (streak > 0) {
-        alert("You sold your streak of " + streak + " wins!");
-        streakReset[currentMode] = lastBattleNumber;
-        updateAll();
-      } else {
-        alert("No win streak to sell.");
-      }
-    }
-    
-    // Save battlesData, streakReset, and maxStreak to localStorage
-    function saveData() {
-      localStorage.setItem('battlesData', JSON.stringify(battlesData));
-      localStorage.setItem('streakReset', JSON.stringify(streakReset));
-      localStorage.setItem('maxStreak', JSON.stringify(maxStreak));
-    }
-    
-    // Delete a battle entry by its battleNumber and update the table numbering
-    function deleteBattle(battleNumber) {
-      if (!confirm('Are you sure you want to delete this entry?')) return;
-      battlesData = battlesData.filter(battle => battle.battleNumber !== battleNumber);
+      let modeData = battlesData.filter(b => b.gameMode === currentGameMode && b.mode === currentMode);
+      let unsoldWins = modeData.filter(b => b.outcome === 'Win' && !b.sold);
+      if(unsoldWins.length === 0) { alert("No win streak to sell."); return; }
+      unsoldWins.forEach(b => b.sold = true);
+      alert("You sold your streak of " + unsoldWins.length + " wins!");
       updateAll();
     }
     
-    // Populate form for editing a battle by its battleNumber
-    function editBattle(battleNumber) {
-      const battle = battlesData.find(b => b.battleNumber === battleNumber);
-      if (!battle) return;
-      if (battle.mode !== currentMode) {
-        alert("This battle belongs to a different mode. Please switch tabs to edit.");
-        return;
-      }
-      editIndex = battle.battleNumber;
-      dateInput.value = battle.date;
-      outcomeInput.value = battle.outcome;
-      killsInput.value = battle.kills;
-      mistakesInput.value = battle.mistakes;
-      detailsInput.value = battle.details;
-      lessonsInput.value = battle.lessons;
-      submitBtn.textContent = 'Save Changes';
+    // Update Timeline Chart (group battles by date, count wins and losses)
+    function updateTimelineChart(data) {
+      const groups = {};
+      data.forEach(b => {
+        if(!groups[b.date]) groups[b.date] = { wins: 0, losses: 0 };
+        if(b.outcome === 'Win') groups[b.date].wins++; else groups[b.date].losses++;
+      });
+      const dates = Object.keys(groups).sort((a,b) => new Date(a)-new Date(b));
+      const winsData = dates.map(d => groups[d].wins);
+      const lossesData = dates.map(d => groups[d].losses);
+      timelineChart.data.labels = dates;
+      timelineChart.data.datasets[0].data = winsData;
+      timelineChart.data.datasets[1].data = lossesData;
+      timelineChart.update();
     }
     
-    // Reset all user data (in memory and in localStorage)
+    // Update Bar Chart for monthly battle counts
+    function updateBarChart(data) {
+      const groups = {};
+      data.forEach(b => {
+        let date = new Date(b.date);
+        let key = (date.getMonth()+1) + '/' + date.getFullYear();
+        groups[key] = (groups[key] || 0) + 1;
+      });
+      const months = Object.keys(groups).sort((a, b) => {
+        let [mA, yA] = a.split('/').map(Number);
+        let [mB, yB] = b.split('/').map(Number);
+        return yA === yB ? mA - mB : yA - yB;
+      });
+      const counts = months.map(m => groups[m]);
+      barChart.data.labels = months;
+      barChart.data.datasets[0].data = counts;
+      barChart.update();
+    }
+    
+    // Update Insights Panel with performance milestones and challenge suggestions
+    function updateInsights(data) {
+      const insights = document.getElementById('insightsPanel');
+      let messages = [];
+      const total = data.length;
+      if(total >= 20) messages.push("You've now played 20 or more battles!");
+      let totalKills = 0, wins = 0;
+      data.forEach(b => { totalKills += b.kills; if(b.outcome === 'Win') wins++; });
+      const avgKills = total ? totalKills/total : 0;
+      if(avgKills >= 15) messages.push("Great job – your average kills per battle are high!");
+      if(currentGameMode === "Evil") messages.push("Evil mode tip: Practice close combat and boarding to master the 1v1 battles!");
+      if(currentGameMode === "TDM") messages.push("TDM tip: Use island resources wisely – food from barrels can turn the tide in combat.");
+      // You can add more custom suggestions based on stats
+      insights.innerHTML = messages.map(m => "<p>" + m + "</p>").join("");
+    }
+    
+    // Detailed Battle View Modal
+    function viewDetails(battle) {
+      const modal = document.getElementById('battleModal');
+      const modalBody = document.getElementById('modalBody');
+      modalBody.innerHTML = `
+        <h3>Battle ${battle.battleNumber} Details</h3>
+        <p><strong>Date:</strong> ${battle.date}</p>
+        <p><strong>Outcome:</strong> ${battle.outcome}</p>
+        <p><strong>Kills:</strong> ${battle.kills}</p>
+        <p><strong>Mistakes:</strong> ${battle.mistakes}</p>
+        <p><strong>Details:</strong> ${battle.details}</p>
+        <p><strong>Lessons:</strong> ${battle.lessons}</p>
+        <p><strong>Game Mode:</strong> ${battle.gameMode} - ${battle.mode}</p>
+      `;
+      modal.style.display = "block";
+    }
+    function closeModal() {
+      document.getElementById('battleModal').style.display = "none";
+    }
+    
+    // Delete a battle and store for undo
+    function deleteBattle(battleNumber) {
+      if(!confirm('Are you sure you want to delete this entry?')) return;
+      const index = battlesData.findIndex(b => b.battleNumber === battleNumber && b.gameMode === currentGameMode && b.mode === currentMode);
+      if(index !== -1) {
+        lastDeletedBattle = battlesData.splice(index, 1)[0];
+      }
+      updateAll();
+    }
+    
+    // Undo deletion
+    function undoDelete() {
+      if(lastDeletedBattle) {
+        battlesData.push(lastDeletedBattle);
+        lastDeletedBattle = null;
+        updateAll();
+      }
+    }
+    
+    // Export Data as JSON file
+    function exportData() {
+      const dataStr = JSON.stringify(battlesData, null, 2);
+      const blob = new Blob([dataStr], {type: "application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "battlesData.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    
+    // Import Data from JSON file
+    function importData(event) {
+      const file = event.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if(Array.isArray(imported)) {
+            battlesData = imported;
+            updateAll();
+            alert("Data imported successfully.");
+          } else {
+            alert("Invalid file format.");
+          }
+        } catch(err) {
+          alert("Error reading file.");
+        }
+      }
+      reader.readAsText(file);
+    }
+    
+    // Toggle Theme
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+    }
+    
+    // Save battlesData to localStorage
+    function saveData() {
+      localStorage.setItem('battlesData', JSON.stringify(battlesData));
+      localStorage.setItem('maxStreak', JSON.stringify(maxStreak));
+    }
+    
+    // Reset All Data
     function resetAllData() {
-      if (confirm("Are you sure you want to permanently wipe all data? This action cannot be undone.")) {
+      if(confirm("Are you sure you want to permanently wipe all data? This action cannot be undone.")) {
         battlesData = [];
-        streakReset = { 'Solo': 0, 'Duo': 0, 'Trio': 0, 'Squad': 0 };
-        maxStreak = { 'Solo': 0, 'Duo': 0, 'Trio': 0, 'Squad': 0 };
+        maxStreak = {};
         localStorage.removeItem('battlesData');
-        localStorage.removeItem('streakReset');
         localStorage.removeItem('maxStreak');
         updateAll();
       }
     }
+    
   </script>
 </body>
 </html>
