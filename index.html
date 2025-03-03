@@ -1,96 +1,753 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script defer src="/_vercel/insights/script.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css"
-    />
-    <title>Vercel HTML Starter</title>
-    <meta
-      name="description"
-      content="High-performance HTML based website template."
-    />
-  </head>
-  <body>
-    <h1>Vercel HTML Starter</h1>
-    <p>
-      This template is a simple, but powerful single
-      <code>index.html</code> file deployed to
-      <a href="https://vercel.com">Vercel</a>. When your site is deployed, all
-      static assets (like HTML, JavaScript, CSS, images, and more) are deployed
-      globally to every
-      <a href="https://vercel.com/docs/concepts/edge-network/overview"
-        >Vercel Edge Network</a
-      >
-      region.
-    </p>
-    <h2>Simple, privacy-friendly analytics</h2>
-    <p>
-      Want to understand your visitor traffic? Vercel Analytics gives you
-      first-party, privacy-friendly traffic analytics for your HTML site. This
-      template is already configured using the following script:
-    </p>
-    <pre><code>&lt;script defer src="/_vercel/insights/script.js"&gt;&lt;/script&gt;</code></pre>
-    <p>
-      Learn more about
-      <a href="https://vercel.com/analytics">Vercel Analytics</a>.
-    </p>
-    <h2>Integrated with git</h2>
-    <p>
-      Deploying updates to your site is as simple as
-      <code>git push</code> thanks to Vercel's advanced
-      <a href="https://vercel.com/docs/concepts/git">Git Integration</a>.
-      Support for GitHub, GitLab, Bitbucket is zero-configuration, and with the
-      flexible Vercel CLI and API, you can integrate with any tool possible.
-    </p>
-    <p>
-      Learn more about
-      <a href="https://vercel.com/docs/concepts/git">Git Integration</a>.
-    </p>
-    <h2>Fast <code>gzip</code> compression</h2>
-    <p>
-      To help ensure the smallest possible file sizes for your static assets,
-      the Vercel Edge Network compresses files by default using
-      <code>gzip</code>. You can also optionally use
-      <code>brotli</code> compressesion if you prefer.
-    </p>
-    <p>
-      Learn more about
-      <a href="https://vercel.com/docs/concepts/edge-network/compression"
-        >compression</a
-      >.
-    </p>
-    <h2>Advanced routing configuration</h2>
-    <p>
-      Vercel gives you a variety of ways to configure the routing of your
-      website. For example, adding redirects, rewrites, or headers to your page.
-      While you can use <code>vercel.json</code> to define these through JSON,
-      you can also express your routing configuration as code using
-      <a href="https://vercel.com/docs/concepts/functions/edge-middleware"
-        >Vercel Edge Middleware</a
-      >.
-    </p>
-    <p>
-      Middleware runs before the
-      <a href="https://vercel.com/docs/concepts/edge-network/caching"
-        >Vercel Edge Network Cache</a
-      >, so you can configure routing exactly as your application needs. For
-      example, this template uses <code>middleware.js</code> defined in the root
-      of the repository to add additional security headers to the site:
-    </p>
-    <pre><code>referrer-policy: origin-when-cross-origin
-strict-transport-security: max-age=31536000; includeSubDomains; preload
-x-content-type-options: nosniff
-x-dns-prefetch-control: on
-x-frame-options: DENY</code></pre>
-    <p>
-      Learn more about
-      <a href="https://vercel.com/docs/concepts/functions/edge-middleware"
-        >Vercel Edge Middleware</a
-      >.
-    </p>
-  </body>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Sea of Thieves Battles Tracker</title>
+  <!-- Include Chart.js from a CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Overall Dark Theme */
+    body {
+      background-color: #121212;
+      color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+      background-color: #1f1f1f;
+      border-bottom: 2px solid #2196f3;
+    }
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    /* Mode Tabs */
+    #modeTabs {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    #modeTabs button {
+      background-color: #1f1f1f;
+      color: #fff;
+      border: 1px solid #333;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin: 0 5px;
+      border-radius: 4px;
+    }
+    #modeTabs button.active {
+      background-color: #2196f3;
+      border-color: #2196f3;
+    }
+    /* Summary Section */
+    #summary {
+      background-color: #1f1f1f;
+      padding: 20px;
+      border-radius: 6px;
+      border: 1px solid #333;
+      margin-bottom: 30px;
+    }
+    #summary h2 {
+      margin-top: 0;
+      color: #2196f3;
+    }
+    #summary p {
+      margin: 6px 0;
+    }
+    /* New: Streak, Sell Button, and Reset Button */
+    #currentStreak, #maxStreakDisplay {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    #sellStreakBtn, #resetBtn {
+      padding: 6px 12px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #sellStreakBtn {
+      background-color: #ff5722;
+      color: #fff;
+    }
+    #sellStreakBtn:hover {
+      background-color: #e64a19;
+    }
+    #resetBtn {
+      background-color: #f44336;
+      color: #fff;
+    }
+    #resetBtn:hover {
+      background-color: #e53935;
+    }
+    /* Achievements */
+    #achievements {
+      margin-top: 10px;
+    }
+    #achievements h3 {
+      margin: 10px 0 5px 0;
+      color: #ffeb3b;
+    }
+    #achievements ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    #achievements ul li {
+      background-color: #333;
+      padding: 5px;
+      margin-bottom: 5px;
+      border-radius: 4px;
+      cursor: default;
+    }
+    /* Form Styling */
+    #battleForm {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      background-color: #1f1f1f;
+      padding: 20px;
+      border-radius: 6px;
+      margin-bottom: 30px;
+      border: 1px solid #333;
+    }
+    #battleForm label {
+      align-self: center;
+    }
+    #battleForm input,
+    #battleForm select {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #444;
+      background-color: #121212;
+      color: #ffffff;
+    }
+    #battleForm input::placeholder {
+      color: #999;
+    }
+    #battleForm button {
+      grid-column: 1 / -1;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      background-color: #2196f3;
+      color: #ffffff;
+      font-size: 16px;
+      cursor: pointer;
+      width: 120px;
+      justify-self: center;
+    }
+    #battleForm button:hover {
+      background-color: #1b82d1;
+    }
+    /* Filter & Sort Options */
+    #filterSortContainer {
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #1f1f1f;
+      padding: 10px;
+      border: 1px solid #333;
+      border-radius: 6px;
+    }
+    #filterSortContainer label {
+      margin-right: 5px;
+    }
+    #filterSortContainer select {
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #444;
+      background-color: #121212;
+      color: #ffffff;
+      margin-right: 15px;
+    }
+    /* Table Styling */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+      background-color: #1f1f1f;
+      border: 1px solid #333;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    table thead {
+      background-color: #2196f3;
+    }
+    table th, table td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #333;
+      color: #fff;
+      white-space: normal;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    table th {
+      font-weight: bold;
+    }
+    table tbody tr:hover {
+      background-color: #2a2a2a;
+    }
+    /* Wrap long text in specific columns so that long messages wrap vertically */
+    table td:nth-child(5),
+    table td:nth-child(6),
+    table td:nth-child(7) {
+      max-width: 250px;
+      text-align: left;
+    }
+    /* Action Buttons */
+    .action-btn {
+      cursor: pointer;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      margin: 0 2px;
+    }
+    .edit-btn {
+      background-color: #4caf50;
+      color: #fff;
+    }
+    .edit-btn:hover {
+      background-color: #43a047;
+    }
+    .delete-btn {
+      background-color: #f44336;
+      color: #fff;
+    }
+    .delete-btn:hover {
+      background-color: #e53935;
+    }
+    /* Chart Containers */
+    #chartContainer, #winChartContainer {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto 30px auto;
+    }
+    #chartContainer {
+      height: 500px;
+    }
+    #winChartContainer {
+      height: 300px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sea of Thieves Battles Tracker</h1>
+  <div class="container">
+    <!-- Mode Tabs -->
+    <div id="modeTabs">
+      <button onclick="setMode('Solo')" id="tabSolo" class="active">Solo</button>
+      <button onclick="setMode('Duo')" id="tabDuo">Duo</button>
+      <button onclick="setMode('Trio')" id="tabTrio">Trio</button>
+      <button onclick="setMode('Squad')" id="tabSquad">Squad</button>
+    </div>
+    
+    <!-- Summary Section -->
+    <div id="summary">
+      <h2>Summary (<span id="currentModeDisplay">Solo</span>)</h2>
+      <p id="totalBattles">Total Battles: 0</p>
+      <p id="avgKills">Average Kills: 0</p>
+      <p id="bestKills">Most Kills: N/A</p>
+      <p id="winRate">Win Rate: 0%</p>
+      <p id="totalWins">Total Wins: 0</p>
+      <p id="totalLosses">Total Losses: 0</p>
+      <p id="currentStreak">Current Streak: 0</p>
+      <p id="maxStreakDisplay">Max Streak: 0</p>
+      <button id="sellStreakBtn" onclick="sellStreak()">Sell Streak</button>
+      <!-- Reset Data Button -->
+      <button id="resetBtn" onclick="resetAllData()">Reset All Data</button>
+      <div id="achievements">
+        <h3>Achievements</h3>
+        <ul id="achievementsList"></ul>
+      </div>
+    </div>
+    
+    <!-- Battle Form (mode determined by active tab) -->
+    <form id="battleForm">
+      <label for="date">Date:</label>
+      <input type="date" id="date" required>
+      
+      <label for="outcome">Outcome:</label>
+      <select id="outcome">
+        <option value="Win">Win</option>
+        <option value="Loss">Loss</option>
+      </select>
+      
+      <label for="kills">Kills:</label>
+      <input type="number" id="kills" placeholder="Number of kills" required>
+      
+      <label for="mistakes">Mistakes:</label>
+      <input type="text" id="mistakes" placeholder="Short summary">
+      
+      <label for="details">Details:</label>
+      <input type="text" id="details" placeholder="More detailed explanation">
+      
+      <label for="lessons">Lessons:</label>
+      <input type="text" id="lessons" placeholder="How to improve">
+      
+      <button type="button" id="submitBtn" onclick="handleFormSubmit()">Add Battle</button>
+    </form>
+    
+    <!-- Filter and Sort Options -->
+    <div id="filterSortContainer">
+      <div>
+        <label for="filterOutcome">Filter by Outcome:</label>
+        <select id="filterOutcome" onchange="updateAll()">
+          <option value="All">All</option>
+          <option value="Win">Win</option>
+          <option value="Loss">Loss</option>
+        </select>
+      </div>
+      <div>
+        <label for="sortBy">Sort by:</label>
+        <select id="sortBy" onchange="updateAll()">
+          <option value="battleNumber">Battle #</option>
+          <option value="date">Date</option>
+          <option value="kills">Kills</option>
+        </select>
+        <select id="sortOrder" onchange="updateAll()">
+          <option value="asc">Ascending</option>
+          <option value="desc">Descending</option>
+        </select>
+      </div>
+    </div>
+    
+    <!-- Battles Table -->
+    <table id="battlesTable">
+      <thead>
+        <tr>
+          <th>Battle #</th>
+          <th>Date</th>
+          <th>Outcome</th>
+          <th>Kills</th>
+          <th>Mistakes</th>
+          <th>Details</th>
+          <th>Lessons</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rows will be added dynamically -->
+      </tbody>
+    </table>
+    
+    <!-- Win/Loss Pie Chart -->
+    <div id="winChartContainer">
+      <canvas id="winChart"></canvas>
+    </div>
+    
+    <!-- Kills Line Chart -->
+    <div id="chartContainer">
+      <canvas id="myChart"></canvas>
+    </div>
+  </div>
+  
+  <script>
+    // Global variable to track current mode (set by tab)
+    let currentMode = 'Solo';
+    // Data store for battles and editing index
+    let battlesData = [];
+    let editIndex = null;
+    
+    // Object to track streak reset point per mode
+    let streakReset = { 'Solo': 0, 'Duo': 0, 'Trio': 0, 'Squad': 0 };
+    // Object to track maximum streak per mode
+    let maxStreak = { 'Solo': 0, 'Duo': 0, 'Trio': 0, 'Squad': 0 };
+    
+    // Load streakReset and maxStreak from localStorage if available
+    const savedStreakReset = localStorage.getItem('streakReset');
+    if (savedStreakReset) {
+      streakReset = JSON.parse(savedStreakReset);
+    }
+    const savedMaxStreak = localStorage.getItem('maxStreak');
+    if (savedMaxStreak) {
+      maxStreak = JSON.parse(savedMaxStreak);
+    }
+    
+    // Form field references
+    const dateInput = document.getElementById('date');
+    const outcomeInput = document.getElementById('outcome');
+    const killsInput = document.getElementById('kills');
+    const mistakesInput = document.getElementById('mistakes');
+    const detailsInput = document.getElementById('details');
+    const lessonsInput = document.getElementById('lessons');
+    const submitBtn = document.getElementById('submitBtn');
+    const currentModeDisplay = document.getElementById('currentModeDisplay');
+    
+    // Helper function to get the smallest available battle number
+    function getNextBattleNumber() {
+      let num = 1;
+      while(battlesData.some(b => b.battleNumber === num)) {
+        num++;
+      }
+      return num;
+    }
+    
+    // Initialize Chart.js for Kills (line chart)
+    const ctx = document.getElementById('myChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Kills',
+            data: [],
+            borderColor: '#00bcd4',
+            fill: false,
+            tension: 0.1,
+            yAxisID: 'yKills'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        backgroundColor: '#121212',
+        scales: {
+          yKills: {
+            type: 'linear',
+            position: 'left',
+            title: {
+              display: true,
+              text: 'Kills',
+              color: '#ffffff'
+            },
+            grid: { color: '#333' },
+            ticks: { color: '#ffffff', stepSize: 1 }
+          },
+          x: {
+            ticks: { color: '#ffffff' },
+            grid: { color: '#333' }
+          }
+        },
+        plugins: { legend: { labels: { color: '#ffffff' } } }
+      }
+    });
+    
+    // Initialize Win/Loss Pie Chart
+    const winCtx = document.getElementById('winChart').getContext('2d');
+    const winChart = new Chart(winCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Wins', 'Losses'],
+        datasets: [{
+          data: [0, 0],
+          backgroundColor: ['#4caf50', '#f44336']
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#ffffff' } } }
+      }
+    });
+    
+    // Achievement tooltips info
+    const achievementInfo = {
+      "First Win": "Achieved when you win your first battle.",
+      "Veteran": "Achieved after completing at least 10 battles.",
+      "Killer Instinct": "Achieved when your average kills per battle are 15 or more.",
+      "Domination": "Achieved when you get 20 or more kills in a single battle.",
+      "Perfect Record": "Achieved when you have a 100% win rate. (You can only get this by playing at least 10 games.)"
+    };
+    
+    // Set mode when a tab is clicked
+    function setMode(mode) {
+      currentMode = mode;
+      currentModeDisplay.textContent = mode;
+      document.querySelectorAll("#modeTabs button").forEach(btn => {
+        btn.classList.remove("active");
+      });
+      document.getElementById("tab" + mode).classList.add("active");
+      updateAll();
+    }
+    
+    // Load saved battlesData from localStorage on page load
+    window.onload = function() {
+      const savedData = localStorage.getItem('battlesData');
+      if (savedData) {
+        battlesData = JSON.parse(savedData);
+      }
+      updateAll();
+    };
+    
+    // Handle Add/Edit button click
+    function handleFormSubmit() {
+      if (editIndex === null) {
+        addBattle();
+      } else {
+        updateBattle(editIndex);
+      }
+    }
+    
+    // Add a new battle entry (mode is set by currentMode)
+    function addBattle() {
+      const newBattle = {
+        battleNumber: getNextBattleNumber(),
+        date: dateInput.value,
+        outcome: outcomeInput.value,
+        kills: parseInt(killsInput.value) || 0,
+        mistakes: mistakesInput.value.trim(),
+        details: detailsInput.value.trim(),
+        lessons: lessonsInput.value.trim(),
+        mode: currentMode
+      };
+      battlesData.push(newBattle);
+      updateAll();
+      document.getElementById('battleForm').reset();
+    }
+    
+    // Update an existing battle entry
+    function updateBattle(id) {
+      const battle = battlesData.find(b => b.battleNumber === id);
+      if (battle) {
+        battle.date = dateInput.value;
+        battle.outcome = outcomeInput.value;
+        battle.kills = parseInt(killsInput.value) || 0;
+        battle.mistakes = mistakesInput.value.trim();
+        battle.details = detailsInput.value.trim();
+        battle.lessons = lessonsInput.value.trim();
+      }
+      editIndex = null;
+      submitBtn.textContent = 'Add Battle';
+      updateAll();
+      document.getElementById('battleForm').reset();
+    }
+    
+    // Update filtered view (table) and overall stats (charts, summary, achievements, streak)
+    function updateAll() {
+      // Get all battles for the current mode
+      const modeData = battlesData.filter(battle => battle.mode === currentMode);
+      
+      // Update charts, summary, achievements, and streak using all battles for the mode
+      updateChart(modeData);
+      updateSummary(modeData);
+      updateAchievements(modeData);
+      updateWinChart(modeData);
+      updateStreak(modeData);
+      
+      // Apply filtering and sorting for the table view only
+      let tableData = modeData.slice();
+      const filterOutcome = document.getElementById('filterOutcome').value;
+      if (filterOutcome !== "All") {
+          tableData = tableData.filter(battle => battle.outcome === filterOutcome);
+      }
+      const sortBy = document.getElementById('sortBy').value;
+      const sortOrder = document.getElementById('sortOrder').value;
+      tableData.sort((a, b) => {
+          let valA = a[sortBy], valB = b[sortBy];
+          if (sortBy === "date") {
+            return sortOrder === "asc" ? new Date(valA) - new Date(valB) : new Date(valB) - new Date(valA);
+          } else if (sortBy === "battleNumber" || sortBy === "kills") {
+            return sortOrder === "asc" ? valA - valB : valB - valA;
+          } else {
+            return 0;
+          }
+      });
+      
+      updateTable(tableData);
+      saveData();
+    }
+    
+    // Update the battles table with provided data
+    function updateTable(filteredData) {
+      const tableBody = document.getElementById('battlesTable').getElementsByTagName('tbody')[0];
+      tableBody.innerHTML = "";
+      filteredData.forEach(battle => {
+        let row = tableBody.insertRow();
+        row.insertCell(0).innerText = battle.battleNumber;
+        row.insertCell(1).innerText = battle.date;
+        row.insertCell(2).innerText = battle.outcome;
+        row.insertCell(3).innerText = battle.kills;
+        row.insertCell(4).innerText = battle.mistakes;
+        row.insertCell(5).innerText = battle.details;
+        row.insertCell(6).innerText = battle.lessons;
+        let actionsCell = row.insertCell(7);
+        let editBtn = document.createElement('button');
+        editBtn.innerText = 'Edit';
+        editBtn.className = 'action-btn edit-btn';
+        editBtn.onclick = () => editBattle(battle.battleNumber);
+        let deleteBtn = document.createElement('button');
+        deleteBtn.innerText = 'Delete';
+        deleteBtn.className = 'action-btn delete-btn';
+        deleteBtn.onclick = () => deleteBattle(battle.battleNumber);
+        actionsCell.appendChild(editBtn);
+        actionsCell.appendChild(deleteBtn);
+      });
+    }
+    
+    // Update the kills line chart with provided data
+    function updateChart(filteredData) {
+      myChart.data.labels = filteredData.map(battle => `Battle ${battle.battleNumber}`);
+      myChart.data.datasets[0].data = filteredData.map(battle => battle.kills);
+      myChart.update();
+    }
+    
+    // Update summary stats with provided data
+    function updateSummary(filteredData) {
+      const totalBattles = filteredData.length;
+      document.getElementById('totalBattles').textContent = `Total Battles: ${totalBattles}`;
+      let totalKills = 0, wins = 0;
+      filteredData.forEach(battle => {
+        totalKills += battle.kills;
+        if (battle.outcome === 'Win') wins++;
+      });
+      document.getElementById('avgKills').textContent = `Average Kills: ${totalBattles ? (totalKills / totalBattles).toFixed(2) : 0}`;
+      const bestKills = totalBattles ? Math.max(...filteredData.map(battle => battle.kills)) : 'N/A';
+      document.getElementById('bestKills').textContent = `Most Kills: ${bestKills}`;
+      const winRate = totalBattles ? ((wins / totalBattles) * 100).toFixed(2) : 0;
+      document.getElementById('winRate').textContent = `Win Rate: ${winRate}%`;
+      document.getElementById('totalWins').textContent = `Total Wins: ${wins}`;
+      document.getElementById('totalLosses').textContent = `Total Losses: ${totalBattles - wins}`;
+    }
+    
+    // Update achievements based on provided data (with tooltips)
+    function updateAchievements(filteredData) {
+      const achievementsList = document.getElementById('achievementsList');
+      achievementsList.innerHTML = "";
+      const totalBattles = filteredData.length;
+      let wins = 0, totalKills = 0;
+      filteredData.forEach(battle => {
+        totalKills += battle.kills;
+        if(battle.outcome === 'Win') wins++;
+      });
+      const avgKills = totalBattles ? totalKills / totalBattles : 0;
+      const bestKills = totalBattles ? Math.max(...filteredData.map(b => b.kills)) : 0;
+      const winRate = totalBattles ? (wins / totalBattles) * 100 : 0;
+      
+      const achievements = [];
+      if(wins >= 1) achievements.push("First Win");
+      if(totalBattles >= 10) achievements.push("Veteran");
+      if(avgKills >= 15) achievements.push("Killer Instinct");
+      if(bestKills >= 20) achievements.push("Domination");
+      if(totalBattles > 10 && winRate === 100) achievements.push("Perfect Record");
+      
+      if(achievements.length === 0) {
+        achievementsList.innerHTML = "<li>No achievements yet.</li>";
+      } else {
+        achievements.forEach(ach => {
+          let li = document.createElement('li');
+          li.innerText = ach;
+          li.title = achievementInfo[ach] || "";
+          achievementsList.appendChild(li);
+        });
+      }
+    }
+    
+    // Update the win/loss pie chart with provided data
+    function updateWinChart(filteredData) {
+      const totalBattles = filteredData.length;
+      let wins = 0;
+      filteredData.forEach(battle => {
+        if(battle.outcome === 'Win') wins++;
+      });
+      const losses = totalBattles - wins;
+      winChart.data.datasets[0].data = [wins, losses];
+      winChart.update();
+    }
+    
+    // Compute and update current streak and max streak based on provided data
+    function updateStreak(filteredData) {
+      const resetPoint = streakReset[currentMode] || 0;
+      const relevant = filteredData.filter(b => b.battleNumber > resetPoint);
+      relevant.sort((a, b) => a.battleNumber - b.battleNumber);
+      let streak = 0;
+      for (let i = relevant.length - 1; i >= 0; i--) {
+        if (relevant[i].outcome === 'Win') {
+          streak++;
+        } else {
+          break;
+        }
+      }
+      document.getElementById('currentStreak').textContent = "Current Streak: " + streak;
+      if (streak > maxStreak[currentMode]) {
+        maxStreak[currentMode] = streak;
+      }
+      document.getElementById('maxStreakDisplay').textContent = "Max Streak: " + maxStreak[currentMode];
+    }
+    
+    // Sell the current streak (reset streak counter for current mode)
+    function sellStreak() {
+      const filteredData = battlesData.filter(b => b.mode === currentMode);
+      if (filteredData.length === 0) {
+        alert("No battles to sell streak from.");
+        return;
+      }
+      const resetPoint = streakReset[currentMode] || 0;
+      const relevant = filteredData.filter(b => b.battleNumber > resetPoint);
+      relevant.sort((a, b) => a.battleNumber - b.battleNumber);
+      let streak = 0;
+      let lastBattleNumber = resetPoint;
+      for (let i = relevant.length - 1; i >= 0; i--) {
+        if (relevant[i].outcome === 'Win') {
+          streak++;
+          lastBattleNumber = relevant[i].battleNumber;
+        } else {
+          break;
+        }
+      }
+      if (streak > 0) {
+        alert("You sold your streak of " + streak + " wins!");
+        streakReset[currentMode] = lastBattleNumber;
+        updateAll();
+      } else {
+        alert("No win streak to sell.");
+      }
+    }
+    
+    // Save battlesData, streakReset, and maxStreak to localStorage
+    function saveData() {
+      localStorage.setItem('battlesData', JSON.stringify(battlesData));
+      localStorage.setItem('streakReset', JSON.stringify(streakReset));
+      localStorage.setItem('maxStreak', JSON.stringify(maxStreak));
+    }
+    
+    // Delete a battle entry by its battleNumber and update the table numbering
+    function deleteBattle(battleNumber) {
+      if (!confirm('Are you sure you want to delete this entry?')) return;
+      battlesData = battlesData.filter(battle => battle.battleNumber !== battleNumber);
+      updateAll();
+    }
+    
+    // Populate form for editing a battle by its battleNumber
+    function editBattle(battleNumber) {
+      const battle = battlesData.find(b => b.battleNumber === battleNumber);
+      if (!battle) return;
+      if (battle.mode !== currentMode) {
+        alert("This battle belongs to a different mode. Please switch tabs to edit.");
+        return;
+      }
+      editIndex = battle.battleNumber;
+      dateInput.value = battle.date;
+      outcomeInput.value = battle.outcome;
+      killsInput.value = battle.kills;
+      mistakesInput.value = battle.mistakes;
+      detailsInput.value = battle.details;
+      lessonsInput.value = battle.lessons;
+      submitBtn.textContent = 'Save Changes';
+    }
+    
+    // Reset all user data (in memory and in localStorage)
+    function resetAllData() {
+      if (confirm("Are you sure you want to permanently wipe all data? This action cannot be undone.")) {
+        battlesData = [];
+        streakReset = { 'Solo': 0, 'Duo': 0, 'Trio': 0, 'Squad': 0 };
+        maxStreak = { 'Solo': 0, 'Duo': 0, 'Trio': 0, 'Squad': 0 };
+        localStorage.removeItem('battlesData');
+        localStorage.removeItem('streakReset');
+        localStorage.removeItem('maxStreak');
+        updateAll();
+      }
+    }
+  </script>
+</body>
 </html>
