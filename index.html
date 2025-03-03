@@ -6,19 +6,13 @@
   <!-- Include Chart.js from a CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* Overall Dark Theme (default) */
+    /* Overall Dark Theme */
     body {
       background-color: #121212;
       color: #ffffff;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    /* Light Theme Overrides */
-    body.light-theme {
-      background-color: #f0f0f0;
-      color: #000000;
     }
     h1 {
       text-align: center;
@@ -26,10 +20,6 @@
       margin: 0;
       background-color: #1f1f1f;
       border-bottom: 2px solid #2196f3;
-    }
-    body.light-theme h1 {
-      background-color: #e0e0e0;
-      border-bottom-color: #1976d2;
     }
     /* Container */
     .container {
@@ -83,10 +73,6 @@
       border: 1px solid #333;
       margin-bottom: 30px;
     }
-    body.light-theme #summary {
-      background-color: #e0e0e0;
-      border-color: #999;
-    }
     #summary h2 {
       margin-top: 0;
       color: #2196f3;
@@ -95,7 +81,7 @@
       margin: 6px 0;
     }
     /* Buttons in Summary */
-    #sellStreakBtn, #resetBtn, #exportBtn, #importBtn, #undoBtn, #toggleThemeBtn {
+    #sellStreakBtn, #resetBtn, #exportBtn, #importBtn, #undoBtn {
       padding: 6px 12px;
       margin: 5px 5px 5px 0;
       border: none;
@@ -116,18 +102,11 @@
     #resetBtn:hover {
       background-color: #e53935;
     }
-    #exportBtn {
+    #exportBtn, #importBtn {
       background-color: #4caf50;
       color: #fff;
     }
-    #exportBtn:hover {
-      background-color: #43a047;
-    }
-    #importBtn {
-      background-color: #4caf50;
-      color: #fff;
-    }
-    #importBtn:hover {
+    #exportBtn:hover, #importBtn:hover {
       background-color: #43a047;
     }
     #undoBtn {
@@ -136,13 +115,6 @@
     }
     #undoBtn:hover {
       background-color: #7b1fa2;
-    }
-    #toggleThemeBtn {
-      background-color: #607d8b;
-      color: #fff;
-    }
-    #toggleThemeBtn:hover {
-      background-color: #455a64;
     }
     /* Achievements */
     #achievements {
@@ -171,9 +143,6 @@
       border-radius: 4px;
       margin-bottom: 30px;
     }
-    body.light-theme #insightsPanel {
-      background-color: #e0e0e0;
-    }
     /* Form Styling */
     #battleForm {
       display: grid;
@@ -185,9 +154,6 @@
       margin-bottom: 30px;
       border: 1px solid #333;
     }
-    body.light-theme #battleForm {
-      background-color: #e0e0e0;
-    }
     #battleForm label {
       align-self: center;
     }
@@ -198,11 +164,6 @@
       border: 1px solid #444;
       background-color: #121212;
       color: #ffffff;
-    }
-    body.light-theme #battleForm input,
-    body.light-theme #battleForm select {
-      background-color: #fff;
-      color: #000;
     }
     #battleForm input::placeholder {
       color: #999;
@@ -233,25 +194,17 @@
       border: 1px solid #333;
       border-radius: 6px;
     }
-    body.light-theme #filterSortContainer {
-      background-color: #e0e0e0;
-      border-color: #999;
-    }
     #filterSortContainer label {
       margin-right: 5px;
     }
-    #filterSortContainer select, #filterSortContainer input[type="date"] {
+    #filterSortContainer select, 
+    #filterSortContainer input[type="date"] {
       padding: 6px;
       border-radius: 4px;
       border: 1px solid #444;
       background-color: #121212;
       color: #ffffff;
       margin-right: 15px;
-    }
-    body.light-theme #filterSortContainer select,
-    body.light-theme #filterSortContainer input[type="date"] {
-      background-color: #fff;
-      color: #000;
     }
     /* Table Styling */
     table {
@@ -262,10 +215,6 @@
       border: 1px solid #333;
       border-radius: 6px;
       overflow: hidden;
-    }
-    body.light-theme table {
-      background-color: #fff;
-      border-color: #999;
     }
     table thead {
       background-color: #2196f3;
@@ -279,17 +228,10 @@
       word-wrap: break-word;
       overflow-wrap: break-word;
     }
-    body.light-theme table th, 
-    body.light-theme table td {
-      color: #000;
-    }
-    table th {
-      font-weight: bold;
-    }
     table tbody tr:hover {
       background-color: #2a2a2a;
     }
-    /* Wrap long text in specific columns so text wraps vertically */
+    /* Wrap long text in specific columns */
     table td:nth-child(5),
     table td:nth-child(6),
     table td:nth-child(7) {
@@ -357,10 +299,6 @@
       border-radius: 6px;
       color: #fff;
     }
-    body.light-theme #battleModalContent {
-      background-color: #fff;
-      color: #000;
-    }
     #closeModal {
       float: right;
       font-size: 28px;
@@ -403,7 +341,6 @@
       <button id="exportBtn" onclick="exportData()">Export Data</button>
       <button id="importBtn" onclick="document.getElementById('importFile').click()">Import Data</button>
       <button id="undoBtn" onclick="undoDelete()" style="display:none;">Undo Delete</button>
-      <button id="toggleThemeBtn" onclick="toggleTheme()">Toggle Theme</button>
       <div id="achievements">
         <h3>Achievements</h3>
         <ul id="achievementsList"></ul>
@@ -521,14 +458,14 @@
   </div>
   
   <script>
-    // Global variables for game mode and sub-mode
+    /* -----------------------------------------------
+       Global variables
+    ----------------------------------------------- */
     let currentGameMode = 'Normal';
     let currentMode = 'Solo';
     let battlesData = [];
     let editIndex = null;
     let lastDeletedBattle = null;
-    
-    // For streaks per combination (key = "GameMode-SubMode")
     let maxStreak = {};
     
     // Form field references
@@ -542,16 +479,18 @@
     const currentModeDisplay = document.getElementById('currentModeDisplay');
     const currentGameModeDisplay = document.getElementById('currentGameModeDisplay');
     
-    // Chart instances
     let myChart, winChart, timelineChart, barChart;
     
-    // Helper: key for current combination
+    /* -----------------------------------------------
+       Helpers
+    ----------------------------------------------- */
     function getKey() {
+      // Key for the current combination of game mode + sub-mode
       return currentGameMode + '-' + currentMode;
     }
     
-    // Helper function to get next available battle number for current combination
     function getNextBattleNumber() {
+      // Finds the smallest available battle number for the current combination
       let num = 1;
       while(battlesData.some(b => b.battleNumber === num && b.gameMode === currentGameMode && b.mode === currentMode)) {
         num++;
@@ -559,58 +498,107 @@
       return num;
     }
     
-    // Initialize Charts
+    /* -----------------------------------------------
+       Initialization
+    ----------------------------------------------- */
+    window.onload = function() {
+      const savedData = localStorage.getItem('battlesData');
+      if (savedData) {
+        battlesData = JSON.parse(savedData);
+      }
+      initCharts();
+      updateAll();
+    };
+    
     function initCharts() {
+      // Kills line chart
       const ctx1 = document.getElementById('myChart').getContext('2d');
       myChart = new Chart(ctx1, {
         type: 'line',
-        data: { labels: [], datasets: [{ label: 'Kills', data: [], borderColor: '#00bcd4', fill: false, tension: 0.1, yAxisID: 'yKills' }] },
+        data: { 
+          labels: [],
+          datasets: [
+            {
+              label: 'Kills',
+              data: [],
+              borderColor: '#00bcd4',
+              fill: false,
+              tension: 0.1,
+              yAxisID: 'yKills'
+            }
+          ]
+        },
         options: {
           responsive: true,
           maintainAspectRatio: false,
           scales: {
-            yKills: { type: 'linear', position: 'left', title: { display: true, text: 'Kills', color: '#ffffff' }, grid: { color: '#333' }, ticks: { color: '#ffffff', stepSize: 1 } },
-            x: { ticks: { color: '#ffffff' }, grid: { color: '#333' } }
+            yKills: {
+              type: 'linear',
+              position: 'left',
+              title: { display: true, text: 'Kills', color: '#ffffff' },
+              grid: { color: '#333' },
+              ticks: { color: '#ffffff', stepSize: 1 }
+            },
+            x: {
+              ticks: { color: '#ffffff' },
+              grid: { color: '#333' }
+            }
           },
           plugins: { legend: { labels: { color: '#ffffff' } } }
         }
       });
       
+      // Win/Loss pie chart
       const winCtx = document.getElementById('winChart').getContext('2d');
       winChart = new Chart(winCtx, {
         type: 'doughnut',
-        data: { labels: ['Wins', 'Losses'], datasets: [{ data: [0, 0], backgroundColor: ['#4caf50', '#f44336'] }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#ffffff' } } } }
+        data: {
+          labels: ['Wins', 'Losses'],
+          datasets: [{
+            data: [0, 0],
+            backgroundColor: ['#4caf50', '#f44336']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#ffffff' } } }
+        }
       });
       
+      // Timeline chart
       const timelineCtx = document.getElementById('timelineChart').getContext('2d');
       timelineChart = new Chart(timelineCtx, {
         type: 'line',
-        data: { labels: [], datasets: [
-          { label: 'Wins', data: [], borderColor: '#4caf50', fill: false },
-          { label: 'Losses', data: [], borderColor: '#f44336', fill: false }
-        ]},
+        data: {
+          labels: [],
+          datasets: [
+            { label: 'Wins', data: [], borderColor: '#4caf50', fill: false },
+            { label: 'Losses', data: [], borderColor: '#f44336', fill: false }
+          ]
+        },
         options: { responsive: true, maintainAspectRatio: false }
       });
       
+      // Bar chart for monthly counts
       const barCtx = document.getElementById('barChart').getContext('2d');
       barChart = new Chart(barCtx, {
         type: 'bar',
-        data: { labels: [], datasets: [{ label: 'Battles Count', data: [], backgroundColor: '#2196f3' }] },
+        data: {
+          labels: [],
+          datasets: [{
+            label: 'Battles Count',
+            data: [],
+            backgroundColor: '#2196f3'
+          }]
+        },
         options: { responsive: true, maintainAspectRatio: false }
       });
     }
     
-    // Set sub-mode
-    function setMode(mode) {
-      currentMode = mode;
-      currentModeDisplay.textContent = mode;
-      document.querySelectorAll("#modeTabs button").forEach(btn => btn.classList.remove("active"));
-      document.getElementById("tab" + mode).classList.add("active");
-      updateAll();
-    }
-    
-    // Set top-level game mode
+    /* -----------------------------------------------
+       Mode switching
+    ----------------------------------------------- */
     function setGameMode(gameMode) {
       currentGameMode = gameMode;
       currentGameModeDisplay.textContent = gameMode;
@@ -619,24 +607,34 @@
       updateAll();
     }
     
-    // Load data from localStorage on page load
-    window.onload = function() {
-      const savedData = localStorage.getItem('battlesData');
-      if (savedData) battlesData = JSON.parse(savedData);
-      initCharts();
+    function setMode(mode) {
+      currentMode = mode;
+      currentModeDisplay.textContent = mode;
+      document.querySelectorAll("#modeTabs button").forEach(btn => btn.classList.remove("active"));
+      document.getElementById("tab" + mode).classList.add("active");
       updateAll();
-    };
-    
-    // Handle Add/Edit button click
-    function handleFormSubmit() {
-      if (editIndex === null) addBattle(); else updateBattle(editIndex);
     }
     
-    // Add battle entry
+    /* -----------------------------------------------
+       Add / Edit battles
+    ----------------------------------------------- */
+    function handleFormSubmit() {
+      if (editIndex === null) {
+        addBattle();
+      } else {
+        updateBattle(editIndex);
+      }
+    }
+    
     function addBattle() {
+      // Make sure date is filled in
+      if (!dateInput.value) {
+        alert("Please select a date.");
+        return;
+      }
       const newBattle = {
         battleNumber: getNextBattleNumber(),
-        date: dateInput.value,
+        date: dateInput.value,  // Typically "yyyy-mm-dd"
         outcome: outcomeInput.value,
         kills: parseInt(killsInput.value) || 0,
         mistakes: mistakesInput.value.trim(),
@@ -647,11 +645,10 @@
         sold: false
       };
       battlesData.push(newBattle);
-      updateAll();
       document.getElementById('battleForm').reset();
+      updateAll();
     }
     
-    // Update battle entry
     function updateBattle(id) {
       const battle = battlesData.find(b => b.battleNumber === id && b.gameMode === currentGameMode && b.mode === currentMode);
       if (battle) {
@@ -664,25 +661,59 @@
       }
       editIndex = null;
       submitBtn.textContent = 'Add Battle';
-      updateAll();
       document.getElementById('battleForm').reset();
+      updateAll();
     }
     
-    // Update views based on current game mode and sub-mode with additional filters
+    function editBattle(battleNumber) {
+      // Locate the existing battle
+      const battle = battlesData.find(b => b.battleNumber === battleNumber && b.gameMode === currentGameMode && b.mode === currentMode);
+      if (!battle) return;
+      
+      // Set form fields to existing data
+      dateInput.value = battle.date;
+      outcomeInput.value = battle.outcome;
+      killsInput.value = battle.kills;
+      mistakesInput.value = battle.mistakes;
+      detailsInput.value = battle.details;
+      lessonsInput.value = battle.lessons;
+      
+      // Switch to edit mode
+      editIndex = battleNumber;
+      submitBtn.textContent = 'Save Changes';
+    }
+    
+    /* -----------------------------------------------
+       Update all (table, charts, summary, etc.)
+    ----------------------------------------------- */
     function updateAll() {
+      // Filter to current gameMode + subMode
       let modeData = battlesData.filter(b => b.gameMode === currentGameMode && b.mode === currentMode);
       
-      // Advanced Date Filtering
-      const fromDate = document.getElementById('filterFromDate').value;
-      const toDate = document.getElementById('filterToDate').value;
-      if (fromDate) {
-        modeData = modeData.filter(b => new Date(b.date) >= new Date(fromDate));
+      // 1) Advanced date filtering
+      const fromValue = document.getElementById('filterFromDate').value;
+      const toValue = document.getElementById('filterToDate').value;
+      
+      if (fromValue) {
+        const fromDateParsed = new Date(fromValue);
+        if (!isNaN(fromDateParsed)) {
+          modeData = modeData.filter(b => {
+            const battleDate = new Date(b.date);
+            return (!isNaN(battleDate)) && (battleDate >= fromDateParsed);
+          });
+        }
       }
-      if (toDate) {
-        modeData = modeData.filter(b => new Date(b.date) <= new Date(toDate));
+      if (toValue) {
+        const toDateParsed = new Date(toValue);
+        if (!isNaN(toDateParsed)) {
+          modeData = modeData.filter(b => {
+            const battleDate = new Date(b.date);
+            return (!isNaN(battleDate)) && (battleDate <= toDateParsed);
+          });
+        }
       }
       
-      // Update charts, summary, achievements, streak, insights, and extra analytics
+      // 2) Update charts, summary, achievements, streak, timeline, bar chart, insights
       updateChart(modeData);
       updateSummary(modeData);
       updateAchievements(modeData);
@@ -692,10 +723,12 @@
       updateBarChart(modeData);
       updateInsights(modeData);
       
-      // Table filtering and sorting
+      // 3) Additional filter by outcome, then sorting for the table
       let tableData = modeData.slice();
       const filterOutcome = document.getElementById('filterOutcome').value;
-      if (filterOutcome !== "All") tableData = tableData.filter(b => b.outcome === filterOutcome);
+      if (filterOutcome !== "All") {
+        tableData = tableData.filter(b => b.outcome === filterOutcome);
+      }
       const sortBy = document.getElementById('sortBy').value;
       const sortOrder = document.getElementById('sortOrder').value;
       tableData.sort((a, b) => {
@@ -704,17 +737,24 @@
           return sortOrder === "asc" ? new Date(valA) - new Date(valB) : new Date(valB) - new Date(valA);
         } else if (sortBy === "battleNumber" || sortBy === "kills") {
           return sortOrder === "asc" ? valA - valB : valB - valA;
-        } else { return 0; }
+        } else {
+          return 0;
+        }
       });
       
+      // 4) Update the table with final data
       updateTable(tableData);
+      
+      // 5) Save to localStorage
       saveData();
       
-      // Show or hide Undo button if lastDeletedBattle exists
+      // 6) Show/hide undo button
       document.getElementById('undoBtn').style.display = lastDeletedBattle ? 'inline-block' : 'none';
     }
     
-    // Update battles table
+    /* -----------------------------------------------
+       Table
+    ----------------------------------------------- */
     function updateTable(data) {
       const tbody = document.getElementById('battlesTable').getElementsByTagName('tbody')[0];
       tbody.innerHTML = "";
@@ -727,33 +767,86 @@
         row.insertCell(4).innerText = battle.mistakes;
         row.insertCell(5).innerText = battle.details;
         row.insertCell(6).innerText = battle.lessons;
+        
         let actionsCell = row.insertCell(7);
         let viewBtn = document.createElement('button');
         viewBtn.innerText = 'View Details';
         viewBtn.className = 'action-btn';
         viewBtn.onclick = () => viewDetails(battle);
+        
         let editBtn = document.createElement('button');
         editBtn.innerText = 'Edit';
         editBtn.className = 'action-btn edit-btn';
         editBtn.onclick = () => editBattle(battle.battleNumber);
+        
         let deleteBtn = document.createElement('button');
         deleteBtn.innerText = 'Delete';
         deleteBtn.className = 'action-btn delete-btn';
         deleteBtn.onclick = () => deleteBattle(battle.battleNumber);
+        
         actionsCell.appendChild(viewBtn);
         actionsCell.appendChild(editBtn);
         actionsCell.appendChild(deleteBtn);
       });
     }
     
-    // Update Kills Line Chart
+    /* -----------------------------------------------
+       Charts
+    ----------------------------------------------- */
     function updateChart(data) {
       myChart.data.labels = data.map(b => `Battle ${b.battleNumber}`);
       myChart.data.datasets[0].data = data.map(b => b.kills);
       myChart.update();
     }
     
-    // Update Summary Stats
+    function updateWinChart(data) {
+      const total = data.length;
+      let wins = 0;
+      data.forEach(b => { if(b.outcome === 'Win') wins++; });
+      const losses = total - wins;
+      winChart.data.datasets[0].data = [wins, losses];
+      winChart.update();
+    }
+    
+    function updateTimelineChart(data) {
+      const groups = {};
+      data.forEach(b => {
+        if(!groups[b.date]) groups[b.date] = { wins: 0, losses: 0 };
+        if(b.outcome === 'Win') groups[b.date].wins++;
+        else groups[b.date].losses++;
+      });
+      const dates = Object.keys(groups).sort((a,b) => new Date(a)-new Date(b));
+      const winsData = dates.map(d => groups[d].wins);
+      const lossesData = dates.map(d => groups[d].losses);
+      timelineChart.data.labels = dates;
+      timelineChart.data.datasets[0].data = winsData;
+      timelineChart.data.datasets[1].data = lossesData;
+      timelineChart.update();
+    }
+    
+    function updateBarChart(data) {
+      const groups = {};
+      data.forEach(b => {
+        let date = new Date(b.date);
+        if(!isNaN(date)) {
+          let key = (date.getMonth()+1) + '/' + date.getFullYear();
+          groups[key] = (groups[key] || 0) + 1;
+        }
+      });
+      const months = Object.keys(groups).sort((a, b) => {
+        let [mA, yA] = a.split('/').map(Number);
+        let [mB, yB] = b.split('/').map(Number);
+        return yA === yB ? mA - mB : yA - yB;
+      });
+      const counts = months.map(m => groups[m]);
+      barChart.data.labels = months;
+      barChart.data.datasets[0].data = counts;
+      barChart.update();
+    }
+    
+    /* -----------------------------------------------
+       Summary, Achievements, Streak
+    ----------------------------------------------- */
     function updateSummary(data) {
       const total = data.length;
       document.getElementById('totalBattles').textContent = `Total Battles: ${total}`;
@@ -767,7 +860,14 @@
       document.getElementById('totalLosses').textContent = `Total Losses: ${total - wins}`;
     }
     
-    // Update Achievements
+    const achievementInfo = {
+      "First Win": "Achieved when you win your first battle.",
+      "Veteran": "Achieved after completing at least 10 battles.",
+      "Killer Instinct": "Achieved when your average kills per battle are 15 or more.",
+      "Domination": "Achieved when you get 20 or more kills in a single battle.",
+      "Perfect Record": "Achieved when you have a 100% win rate. (You must have at least 10 battles.)"
+    };
+    
     function updateAchievements(data) {
       const list = document.getElementById('achievementsList');
       list.innerHTML = "";
@@ -777,27 +877,26 @@
       const avgKills = total ? totalKills/total : 0;
       const bestKills = total ? Math.max(...data.map(b => b.kills)) : 0;
       const winRate = total ? (wins/total)*100 : 0;
+      
       const achievements = [];
       if(wins >= 1) achievements.push("First Win");
       if(total >= 10) achievements.push("Veteran");
       if(avgKills >= 15) achievements.push("Killer Instinct");
       if(bestKills >= 20) achievements.push("Domination");
-      if(total > 10 && winRate === 100) achievements.push("Perfect Record");
-      if(achievements.length === 0) list.innerHTML = "<li>No achievements yet.</li>";
-      else achievements.forEach(a => { let li = document.createElement('li'); li.innerText = a; li.title = achievementInfo[a] || ""; list.appendChild(li); });
+      if(total >= 10 && winRate === 100) achievements.push("Perfect Record");
+      
+      if(achievements.length === 0) {
+        list.innerHTML = "<li>No achievements yet.</li>";
+      } else {
+        achievements.forEach(a => {
+          let li = document.createElement('li');
+          li.innerText = a;
+          li.title = achievementInfo[a] || "";
+          list.appendChild(li);
+        });
+      }
     }
     
-    // Update Win/Loss Pie Chart
-    function updateWinChart(data) {
-      const total = data.length;
-      let wins = 0;
-      data.forEach(b => { if(b.outcome === 'Win') wins++; });
-      const losses = total - wins;
-      winChart.data.datasets[0].data = [wins, losses];
-      winChart.update();
-    }
-    
-    // Update current streak: count unsold wins
     function updateStreak(data) {
       const unsoldWins = data.filter(b => b.outcome === 'Win' && !b.sold);
       let streak = unsoldWins.length;
@@ -807,52 +906,21 @@
       document.getElementById('maxStreakDisplay').textContent = "Max Streak: " + (maxStreak[key] || 0);
     }
     
-    // Sell Streak: mark all unsold win battles as sold (thus resetting streak to 0)
+    /* -----------------------------------------------
+       Sell streak, insights, etc.
+    ----------------------------------------------- */
     function sellStreak() {
       let modeData = battlesData.filter(b => b.gameMode === currentGameMode && b.mode === currentMode);
       let unsoldWins = modeData.filter(b => b.outcome === 'Win' && !b.sold);
-      if(unsoldWins.length === 0) { alert("No win streak to sell."); return; }
+      if(unsoldWins.length === 0) {
+        alert("No win streak to sell.");
+        return;
+      }
       unsoldWins.forEach(b => b.sold = true);
       alert("You sold your streak of " + unsoldWins.length + " wins!");
       updateAll();
     }
     
-    // Update Timeline Chart (group battles by date, count wins and losses)
-    function updateTimelineChart(data) {
-      const groups = {};
-      data.forEach(b => {
-        if(!groups[b.date]) groups[b.date] = { wins: 0, losses: 0 };
-        if(b.outcome === 'Win') groups[b.date].wins++; else groups[b.date].losses++;
-      });
-      const dates = Object.keys(groups).sort((a,b) => new Date(a)-new Date(b));
-      const winsData = dates.map(d => groups[d].wins);
-      const lossesData = dates.map(d => groups[d].losses);
-      timelineChart.data.labels = dates;
-      timelineChart.data.datasets[0].data = winsData;
-      timelineChart.data.datasets[1].data = lossesData;
-      timelineChart.update();
-    }
-    
-    // Update Bar Chart for monthly battle counts
-    function updateBarChart(data) {
-      const groups = {};
-      data.forEach(b => {
-        let date = new Date(b.date);
-        let key = (date.getMonth()+1) + '/' + date.getFullYear();
-        groups[key] = (groups[key] || 0) + 1;
-      });
-      const months = Object.keys(groups).sort((a, b) => {
-        let [mA, yA] = a.split('/').map(Number);
-        let [mB, yB] = b.split('/').map(Number);
-        return yA === yB ? mA - mB : yA - yB;
-      });
-      const counts = months.map(m => groups[m]);
-      barChart.data.labels = months;
-      barChart.data.datasets[0].data = counts;
-      barChart.update();
-    }
-    
-    // Update Insights Panel with performance milestones and challenge suggestions
     function updateInsights(data) {
       const insights = document.getElementById('insightsPanel');
       let messages = [];
@@ -862,13 +930,14 @@
       data.forEach(b => { totalKills += b.kills; if(b.outcome === 'Win') wins++; });
       const avgKills = total ? totalKills/total : 0;
       if(avgKills >= 15) messages.push("Great job – your average kills per battle are high!");
-      if(currentGameMode === "Evil") messages.push("Evil mode tip: Practice close combat and boarding to master the 1v1 battles!");
-      if(currentGameMode === "TDM") messages.push("TDM tip: Use island resources wisely – food from barrels can turn the tide in combat.");
-      // You can add more custom suggestions based on stats
+      if(currentGameMode === "Evil") messages.push("Evil mode tip: Practice close combat and boarding for 1v1 battles!");
+      if(currentGameMode === "TDM") messages.push("TDM tip: Use island resources wisely – food from barrels can be crucial!");
       insights.innerHTML = messages.map(m => "<p>" + m + "</p>").join("");
     }
     
-    // Detailed Battle View Modal
+    /* -----------------------------------------------
+       Detailed Battle Modal
+    ----------------------------------------------- */
     function viewDetails(battle) {
       const modal = document.getElementById('battleModal');
       const modalBody = document.getElementById('modalBody');
@@ -888,7 +957,9 @@
       document.getElementById('battleModal').style.display = "none";
     }
     
-    // Delete a battle and store for undo
+    /* -----------------------------------------------
+       Deletion + Undo
+    ----------------------------------------------- */
     function deleteBattle(battleNumber) {
       if(!confirm('Are you sure you want to delete this entry?')) return;
       const index = battlesData.findIndex(b => b.battleNumber === battleNumber && b.gameMode === currentGameMode && b.mode === currentMode);
@@ -898,7 +969,6 @@
       updateAll();
     }
     
-    // Undo deletion
     function undoDelete() {
       if(lastDeletedBattle) {
         battlesData.push(lastDeletedBattle);
@@ -907,7 +977,9 @@
       }
     }
     
-    // Export Data as JSON file
+    /* -----------------------------------------------
+       Export / Import
+    ----------------------------------------------- */
     function exportData() {
       const dataStr = JSON.stringify(battlesData, null, 2);
       const blob = new Blob([dataStr], {type: "application/json"});
@@ -919,7 +991,6 @@
       URL.revokeObjectURL(url);
     }
     
-    // Import Data from JSON file
     function importData(event) {
       const file = event.target.files[0];
       if(!file) return;
@@ -941,18 +1012,14 @@
       reader.readAsText(file);
     }
     
-    // Toggle Theme
-    function toggleTheme() {
-      document.body.classList.toggle('light-theme');
-    }
-    
-    // Save battlesData to localStorage
+    /* -----------------------------------------------
+       Data Save & Reset
+    ----------------------------------------------- */
     function saveData() {
       localStorage.setItem('battlesData', JSON.stringify(battlesData));
       localStorage.setItem('maxStreak', JSON.stringify(maxStreak));
     }
     
-    // Reset All Data
     function resetAllData() {
       if(confirm("Are you sure you want to permanently wipe all data? This action cannot be undone.")) {
         battlesData = [];
@@ -962,7 +1029,6 @@
         updateAll();
       }
     }
-    
   </script>
 </body>
 </html>
