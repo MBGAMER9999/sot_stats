@@ -459,6 +459,12 @@
   
   <script>
     /* -----------------------------------------------
+       Discord Webhook
+       Replace with your actual webhook URL below
+    ----------------------------------------------- */
+    const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1346578233390399538/J_-U0njTExbLnLm_H11f8F8qFh00CnUv5aBPkZ915ETHeQUeFC4HMaRWnUU1v7lGDPrq";
+
+    /* -----------------------------------------------
        Global variables
     ----------------------------------------------- */
     let currentGameMode = 'Normal';
@@ -496,6 +502,37 @@
         num++;
       }
       return num;
+    }
+
+    /* 
+       Send data to Discord
+       Called inside addBattle() 
+    */
+    function sendToDiscord(battle) {
+      // Construct a message
+      const messageContent = 
+        `**New Battle Added**\n` +
+        `**Date:** ${battle.date}\n` +
+        `**Outcome:** ${battle.outcome}\n` +
+        `**Kills:** ${battle.kills}\n` +
+        `**Mistakes:** ${battle.mistakes}\n` +
+        `**Details:** ${battle.details}\n` +
+        `**Lessons:** ${battle.lessons}\n` +
+        `**Game Mode:** ${battle.gameMode}\n` +
+        `**Sub-Mode:** ${battle.mode}\n`;
+
+      // Send POST request to the Discord webhook
+      fetch(DISCORD_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: messageContent })
+      })
+      .then(response => {
+        console.log("Discord webhook sent:", response.status);
+      })
+      .catch(error => {
+        console.error("Error sending to Discord:", error);
+      });
     }
     
     /* -----------------------------------------------
@@ -634,7 +671,7 @@
       }
       const newBattle = {
         battleNumber: getNextBattleNumber(),
-        date: dateInput.value,  // Typically "yyyy-mm-dd"
+        date: dateInput.value,
         outcome: outcomeInput.value,
         kills: parseInt(killsInput.value) || 0,
         mistakes: mistakesInput.value.trim(),
@@ -645,6 +682,11 @@
         sold: false
       };
       battlesData.push(newBattle);
+      
+      // Send info to Discord
+      sendToDiscord(newBattle);
+      
+      // Reset form and update
       document.getElementById('battleForm').reset();
       updateAll();
     }
@@ -930,8 +972,8 @@
       data.forEach(b => { totalKills += b.kills; if(b.outcome === 'Win') wins++; });
       const avgKills = total ? totalKills/total : 0;
       if(avgKills >= 15) messages.push("Great job – your average kills per battle are high!");
-      if(currentGameMode === "Evil") messages.push("Evil mode tip: Practice close combat and boarding for 1v1 battles!");
-      if(currentGameMode === "TDM") messages.push("TDM tip: Use island resources wisely – food from barrels can be crucial!");
+      if(currentGameMode === "Evil") messages.push("Evil mode = fun");
+      if(currentGameMode === "TDM") messages.push("TDM = based");
       insights.innerHTML = messages.map(m => "<p>" + m + "</p>").join("");
     }
     
